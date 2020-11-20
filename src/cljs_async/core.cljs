@@ -61,6 +61,21 @@
   [p f]
   (.finally p (lift-ifn f)))
 
+(defn try-finally
+  "Calls `(f)` in a try-finally block, eventually calling `(g)`
+  afterwards. Unlike an ordinary `try..finally` expression, if `f`
+  does not throw and returns a promise, then `g` is called after that
+  promise is settled."
+  [f g]
+  (let [async? (atom false)]
+    (try (let [res (f)]
+           (if (promise? res)
+             (do (reset! async? true)
+                 (finally res g))
+             res))
+         (finally (when-not @async?
+                    (g))))))
+
 (defn all
   "Returns a promise that resolves to a sequence of the results of all
   the given promises, or rejects with the first promise in the list

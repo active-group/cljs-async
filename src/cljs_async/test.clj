@@ -13,17 +13,3 @@
      (ubp/is-resolved [r# (core/lift (do ~@body))]
                       r#)))
 
-#_(defmacro testing
-  "Like [[cljs.test/testing]], but all expressions in `body` that
-  evaluate to a promise are combined into a single
-  promise (sequentially) and returned. So this can be used
-  in [[deftest]] to label and combine multiple asynchronous test
-  steps."
-  [label & body]
-  `(t/testing ~label
-     (core/sequ-lift (list ~@body))))
-
-
-#_(defmacro use-fixtures
-  "Like [[cljs.test/testing]]"
-  )
