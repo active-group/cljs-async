@@ -27,10 +27,7 @@
 ```
 
   Note that the returned fixture cannot be used more than once; create
-  fresh ones with the same function if you need it in more than one
-  in the same test namespace.
-"
-  
+  fresh ones with the same function `g` instead."
   [g]
   ;; cljs.test should have offered/done this! :-/
   (let [res (atom nil)]
@@ -95,8 +92,7 @@
 ```
 
   Note that the returned fixture cannot be used more than once; create
-  fresh ones with the same function if you need it in more than one
-  in the same test namespace.
+  fresh ones with the same function `g` instead.
 "
   [g]
   (simple-async-fixture

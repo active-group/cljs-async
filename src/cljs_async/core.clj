@@ -9,7 +9,7 @@
 
 (defmacro async
   "Returns a promise executing the code in `body`. Inside the
-  body, [[async]] expressions can be used to wait for and bind to the
+  body, [[async]] expressions can be used to wait for and return the
   result of other promises. Errors thrown during the execution will
   result in a rejected promise.
 
@@ -37,7 +37,8 @@
      (p-ch-result v#)))
 
 (defmacro with-redefs
-  "binding => var-symbol temp-value-expr
+  "`binding => var-symbol temp-value-expr`
+
   Temporarily redefines vars while executing the body.  The
   temp-value-exprs will be evaluated and each resulting value will
   replace in parallel the root value of its var.  After the body is
@@ -46,8 +47,7 @@
 
   This is almost the same as [[clojure.core/with-redefs]], except if
   `body` evaluates to a promise, the vars will not be set back to
-  their previous values until that promise completes. Note that this
-  means async tests using this should not be run in parallel!"
+  their previous values until that promise settles."
 
   ;; same as https://github.com/clojure/clojurescript/blob/f884af0aef03147f3eef7a680579f704a7b6b81c/src/main/clojure/cljs/core.cljc#L2248
   ;; but try-finally replaced with finally*
