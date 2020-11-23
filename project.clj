@@ -1,4 +1,4 @@
-(defproject de.active-group/cljs-async "1.0-SNAPSHOT"
+(defproject de.active-group/cljs-async "1.0.0"
   :description "A ClojureScript library for asynchronous programming based on JavaScript promises."
 
   :url "http://github.com/active-group/cljs-async"
