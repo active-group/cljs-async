@@ -1,3 +1,4 @@
 target
 .shadow-cljs
 pom.xml
+pom.xml.asc
