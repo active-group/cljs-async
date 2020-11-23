@@ -38,31 +38,31 @@
   (js/Promise.reject reason))
 
 (defn then
-  "Returns a promise, that continues in the function `f` once and if
+  "Returns a promise that continues in the function `f` once and if
   the promise `p` is resolved. `f` will be called with the result of
-  `p` and may return another promise. Passing `catch-f` is the same as
-  using [[catch]] on the returned promise."
+  `p` and may return another promise. When `catch-f` is specified, it
+  is called if `p` is rejected."
   ([p f]
    (.then p (lift-ifn f)))
   ([p f catch-f]
    (.then p (lift-ifn f) (lift-ifn catch-f))))
 
 (defn catch
-  "Returns a promise, that continues in the function `f` once and if
+  "Returns a promise that continues in the function `f` once and if
   the promise `p` is rejected. `f` will be called with the reason of
   the rejected `p` and may return another promise."
   [p f]
   (.catch p (lift-ifn f)))
 
 (defn finally
-  "Returns a promise, that calls `f` once the promise `p` is settled,
+  "Returns a promise that calls `f` once the promise `p` is settled,
   no matter if resolved or rejected. `f` will be called with no
   arguments, and its return value is ignored."
   [p f]
   (.finally p (lift-ifn f)))
 
 (defn try-finally
-  "Calls `(f)` in a try-finally block, eventually calling `(g)`
+  "Calls `f` in a try-finally block, eventually calling `g`
   afterwards. Unlike an ordinary `try..finally` expression, if `f`
   does not throw and returns a promise, then `g` is called after that
   promise is settled."

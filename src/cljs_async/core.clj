@@ -50,7 +50,7 @@
   their previous values until that promise settles."
 
   ;; same as https://github.com/clojure/clojurescript/blob/f884af0aef03147f3eef7a680579f704a7b6b81c/src/main/clojure/cljs/core.cljc#L2248
-  ;; but try-finally replaced with finally*
+  ;; but try..finally replaced with core/try-finally
   [bindings & body]
   (let [names (take-nth 2 bindings)
         vals (take-nth 2 (drop 1 bindings))

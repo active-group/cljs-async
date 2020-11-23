@@ -21,16 +21,16 @@ The generated API docs are available on
 
 Primitive promises can be created with `promise`:
 
-```
+```clojure
 (core/promise
   (fn [resolve reject]
      ...some asynchronous operation...
-	 (resovle :result)))
+	 (resolve :result)))
 ```
 
 To compose promises, the `async` macro is the most comfortable:
 
-```
+```clojure
 (core/async
   (let [v (core/await some-promise)
         w (core/await some-other-promise)]

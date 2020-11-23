@@ -6,7 +6,7 @@
 (defmacro deftest
   "Like [[cljs.test/deftest]], but the last expression in `body` may
   be a promise which is then waited for.  A rejected promise is
-  reported as a test failure. Tests defined by this are always a
+  reported as a test failure. Tests defined by this are always
   asynchronous tests."
   [name & body]
   `(t/deftest ~name
