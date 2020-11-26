@@ -49,6 +49,9 @@
   (p v))
 
 (deftype ^:private Future [js done?]
+         IPending
+         (-realized? [this]
+           @done?)
          IAsyncDeref
          (-async-deref [this]
            js))

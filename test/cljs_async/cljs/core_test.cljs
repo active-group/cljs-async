@@ -2,7 +2,7 @@
   (:require [cljs-async.test :refer (deftest) :include-macros true]
             [cljs.test :refer (is testing) :include-macros true]
             [cljs-async.core :refer (async await) :include-macros true]
-            [cljs-async.cljs.core :as core]))
+            [cljs-async.cljs.core :as core :include-macros true]))
 
 (deftest promise-test
   (async
@@ -34,4 +34,19 @@
      (let [p (core/promise)]
        (js/setTimeout #(core/deliver p 42) 1)
        (is (= 42 (await (core/async-deref p 100 :timeout))))))
+   ))
+
+(deftest future-test
+  (async
+   (testing "basics"
+     (let [f (core/future 42)]
+       (is (not (realized? f)))
+
+       (is (= 42 (await (core/async-deref f))))
+
+       (is (realized? f))))
+
+   (testing "async futures"
+     (let [f (core/future (async 42))]
+       (is (= 42 (await (core/async-deref f))))))
    ))
