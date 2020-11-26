@@ -90,15 +90,13 @@
   promises are rejects, in which case the reason will be a
   js/AggregateError containing all the rejection reasons."
   [promises]
-  (-> (js/Promise.any promises)
-      (then array-seq)))
+  (js/Promise.any promises))
 
 (defn race
   "Returns a promise that resolves or rejects to the first promise
   from the list of promises that does any of that."
   [promises]
-  (-> (js/Promise.race promises)
-      (then array-seq)))
+  (js/Promise.race promises))
 
 (let [settled-res (fn [a]
                     (->> (array-seq a)
