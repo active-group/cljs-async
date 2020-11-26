@@ -133,7 +133,7 @@
     v
     (resolve v)))
 
-#_(defn timeout
+(defn timeout
   "Returns a promise that resolves after the given number of
   milliseconds to the given value, which defaults to `nil`."
   [ms & [value]]
