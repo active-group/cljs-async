@@ -81,3 +81,19 @@
                  (core/catch (fn [v]
                                (t/is false v)))
                  (core/finally done)))))
+
+(t/deftest timeout-test-1
+  (t/async done
+           (-> (core/timeout 1 :v1)
+               (core/then (fn [res]
+                            (t/is (= :v1 res))))
+               (core/finally done))))
+
+(t/deftest timeout-test-2
+  (t/async done
+           (let [p (core/race [(core/timeout 100 :v2)
+                               (core/timeout 1 :v1)])]
+             (-> p
+                 (core/then (fn [res]
+                              (t/is (= :v1 res))))
+                 (core/finally done)))))

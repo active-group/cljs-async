@@ -10,7 +10,6 @@
 (u/de-test! test-1)
 
 (deftest deftest-test-1
-  (println "test")
   (u/async-intercept-report
    test-1
    (fn [report]
