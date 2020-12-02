@@ -1,5 +1,12 @@
 (ns cljs-async.cljs.core
-  "Promises and futures largely compatible with the clojure.core api."
+  "Promises and futures largely compatible with the clojure.core api.
+
+  The main difference is, that [[cljs.core/deref]]/`@` cannot be used
+  on promises and futures. Instead [[async-deref]] can be used to work
+  with the respective results asynchronously. Also, futures may do
+  asynchronous operations, by returning a [[core/promise]].
+
+  Note that [[cljs.core/realized?]] works on both promises and futures."
   (:require [cljs-async.core :as core]))
 
 ;; Note: I think dynamic bindings, agents and probably refs, require
@@ -49,6 +56,7 @@
          IAsyncDeref
          (-async-deref [this]
            js)
+         ;; TODO? IPrintWithWriter
          IFn
          (-invoke [this v]
            (when-let [f @resolve]
@@ -73,21 +81,32 @@
               res
               done?)))
 
-(defn deliver [p v]
+(defn deliver
+  "Delivers the supplied value to the promise, releasing any pending
+  derefs. A subsequent call to deliver on a promise will have no
+  effect."
+  [p v]
   (assert (instance? Promise p))
   (p v))
 
 ;; --- Futures ---
 
+;; see future macro in core.clj
+
 (deftype ^:private Future [js done?]
          IPending
          (-realized? [this]
            @done?)
+         ;; TODO? IPrintWithWriter
          IAsyncDeref
          (-async-deref [this]
            js))
 
-(defn ^:no-doc future* [thunk]
+(defn future-call
+  "Takes a function of no args and yields a future object that will
+  invoke the function later, and will cache the result and return it on
+  all subsequent calls to [[async-deref]]."
+  [thunk]
   (let [done? (atom false)]
     (Future. (-> (core/promise (fn [resolve reject]
                                  (try (let [v (thunk)]
@@ -100,3 +119,25 @@
                  (core/finally #(reset! done? true)))
              done?)))
 
+(defn future?
+  "Returns true if `v` is a future."
+  [v]
+  (instance? Future v))
+
+(defn future-cancel
+  "Cancels the future, if possible."
+  [f]
+  ;; Never possible, afaik.
+  false)
+
+(defn future-cancelled?
+  "Returns true if the given future is cancelled."
+  [f]
+  ;; see future-cancel
+  false)
+
+(defn future-done?
+  "Returns true if the given future is done."
+  [f]
+  ;; or cancelled, if we could cancel...
+  (realized? f))

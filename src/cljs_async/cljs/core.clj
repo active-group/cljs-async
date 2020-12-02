@@ -6,4 +6,4 @@
   evaluate the body later, and will cache the result and return it on
   all subsequent calls to [[async-deref]]."
   [& body]
-  `(future* (fn [] ~@body)))
+  `(cljs-async.cljs.core/future-call (fn [] ~@body)))
