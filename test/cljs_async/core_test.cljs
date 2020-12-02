@@ -91,8 +91,8 @@
 
 (t/deftest timeout-test-2
   (t/async done
-           (let [p (core/race [(core/timeout 100 :v2)
-                               (core/timeout 1 :v1)])]
+           (let [p (core/race (core/timeout 100 :v2)
+                              (core/timeout 1 :v1))]
              (-> p
                  (core/then (fn [res]
                               (t/is (= :v1 res))))

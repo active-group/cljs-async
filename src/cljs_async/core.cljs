@@ -78,8 +78,8 @@
 
 (defn all
   "Returns a promise that resolves to a sequence of the results of all
-  the given promises, or rejects with the first promise in the list
-  that is rejected."
+  the given promises in the same order, or rejects with the first
+  promise in the list that is rejected."
   [promises]
   (-> (js/Promise.all promises)
       (then array-seq)))
@@ -87,15 +87,17 @@
 (defn any
   "Returns a promise that resolves to the any of the given promises
   which resolves successfully. It rejects only if all the given
-  promises are rejects, in which case the reason will be a
-  js/AggregateError containing all the rejection reasons."
-  [promises]
+  promises are rejected, in which case the reason will be a
+  js/AggregateError containing all the rejection reasons. Note
+  that `(any)` will fail immediately."
+  [& promises]
   (js/Promise.any promises))
 
 (defn race
-  "Returns a promise that resolves or rejects to the first promise
-  from the list of promises that does any of that."
-  [promises]
+  "Returns a promise that resolves or rejects to the first promise or
+  the given promises that does any of that. Note that `(race)` will
+  never resolve nor reject."
+  [& promises]
   (js/Promise.race promises))
 
 (let [settled-res (fn [a]
@@ -116,20 +118,6 @@
     [promises]
     (-> (js/Promise.allSettled promises)
         (then settled-res))))
-
-(defn sequ
-  "Returns a promise that will run the given promises sequentially in
-  the given order, resolving to the value of the last one, or
-  rejecting immediately if any of them is rejected."
-  [promises]
-  (reduce then
-          (resolve nil)
-          (map constantly promises)))
-
-(defn ^:no-doc lift [v]
-  (if (promise? v)
-    v
-    (resolve v)))
 
 (defn timeout
   "Returns a promise that resolves after the given number of

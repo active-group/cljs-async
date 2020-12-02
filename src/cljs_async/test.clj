@@ -10,6 +10,6 @@
   asynchronous tests."
   [name & body]
   `(t/deftest ~name
-     (ubp/is-resolved [r# (core/lift (do ~@body))]
+     (ubp/is-resolved [r# (core/resolve (do ~@body))]
                       r#)))
 

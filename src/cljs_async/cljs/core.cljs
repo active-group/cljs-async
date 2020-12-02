@@ -34,8 +34,8 @@
      (-async-deref-with-timeout v timeout-ms timeout-val)
      
      (satisfies? IAsyncDeref v)
-     (core/race [(async-deref v)
-                 (core/timeout timeout-ms timeout-val)])
+     (core/race (async-deref v)
+                (core/timeout timeout-ms timeout-val))
 
      :else
      (core/resolve (-deref-with-timeout v timeout-ms timeout-val)))))
