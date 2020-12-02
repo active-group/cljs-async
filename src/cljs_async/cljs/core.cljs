@@ -1,7 +1,13 @@
 (ns cljs-async.cljs.core
   "Promises and futures largely compatible with the clojure.core api."
-  (:require [cljs-async.core :as core])
-  (:refer-clojure :exclude [promise deliver future]))
+  (:require [cljs-async.core :as core]))
+
+;; Note: I think dynamic bindings, agents and probably refs, require
+;; the notion of a 'current thread', which we don't have. (node.js has
+;; 'Async hooks', which might be a way to follow)
+
+;; --- async-deref ---
+;; main difference to clojure, as JS does not have blocking.
 
 (defprotocol IAsyncDeref
   (-async-deref [this] "Returns a js/Promise resolving to the value of
@@ -12,6 +18,29 @@
   js/Promise resolving to the value of this once it is available, or
   to the given value after a timeout of the given number of
   milliseconds."))
+
+(defn async-deref
+  "Returns a js/Promise of the result of the given promise or future, optionally with a timeout."
+  ([v]
+   (cond
+     (satisfies? IAsyncDeref v)
+     (-async-deref v)
+
+     :else
+     (core/resolve (deref v))))
+  ([v timeout-ms timeout-val]
+   (cond
+     (satisfies? IAsyncDerefWithTimeout v)
+     (-async-deref-with-timeout v timeout-ms timeout-val)
+     
+     (satisfies? IAsyncDeref v)
+     (core/race [(async-deref v)
+                 (core/timeout timeout-ms timeout-val)])
+
+     :else
+     (core/resolve (-deref-with-timeout v timeout-ms timeout-val)))))
+
+;; --- Promises ---
 
 (deftype ^:private Promise [js resolve done?]
          IPending
@@ -48,6 +77,8 @@
   (assert (instance? Promise p))
   (p v))
 
+;; --- Futures ---
+
 (deftype ^:private Future [js done?]
          IPending
          (-realized? [this]
@@ -69,23 +100,3 @@
                  (core/finally #(reset! done? true)))
              done?)))
 
-(defn async-deref
-  "Returns a js/Promise of the result of the given promise or future, optionally with a timeout."
-  ([v]
-   (cond
-     (satisfies? IAsyncDeref v)
-     (-async-deref v)
-
-     :else
-     (core/resolve (deref v))))
-  ([v timeout-ms timeout-val]
-   (cond
-     (satisfies? IAsyncDerefWithTimeout v)
-     (-async-deref-with-timeout v timeout-ms timeout-val)
-     
-     (satisfies? IAsyncDeref v)
-     (core/race [(async-deref v)
-                 (core/timeout timeout-ms timeout-val)])
-
-     :else
-     (core/resolve (-deref-with-timeout v timeout-ms timeout-val)))))
